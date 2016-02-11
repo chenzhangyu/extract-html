@@ -51,7 +51,6 @@ class ExtractResponse(object):
     def push(self, data, _type="text"):
         assert _type in self.type_allowed
         if _type == "image":
-            print "image"
             data = self._strip_img_src(data)
         self._r.append({
             "seq": self._counter,
