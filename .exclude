@@ -1,4 +1,5 @@
+venv/
+.git/
 *.pyc
 *.swp
 *.log
-venv/

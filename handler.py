@@ -16,6 +16,7 @@ class IndexHandler(tornado.web.RequestHandler):
 
     @tornado.web.asynchronous
     def post(self):
+        logging.info(self.request)
         url = self.get_body_argument("url")
         headers = {
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
