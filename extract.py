@@ -1,9 +1,13 @@
 # coding=utf8
 
 import logging
+from collections import namedtuple
 
 from bs4 import BeautifulSoup
 from bs4.element import Tag, Comment
+
+
+LinkItem = namedtuple("LinkItem", ["type_", "data", "href"])
 
 
 def priority_get(d, fields, default=None):
@@ -48,14 +52,15 @@ class ExtractResponse(object):
     def type_allowed(self):
         return ("text", "image")
 
-    def push(self, data, _type="text"):
-        assert _type in self.type_allowed
-        if _type == "image":
+    def push(self, data, type_="text", link=""):
+        assert type_ in self.type_allowed
+        if type_ == "image":
             data = self._strip_img_src(data)
         self._r.append({
             "seq": self._counter,
-            "type": _type,
-            "data": data
+            "type": type_,
+            "data": data,
+            "link": link
         })
         self._counter += 1
 
@@ -69,6 +74,7 @@ class Extraxt(object):
         self.raw = raw
         self.result = ExtractResponse()
         self.soup = BeautifulSoup(raw, "lxml")
+        self._href = None
 
     def parse(self):
         for child in self.soup.body.descendants:
@@ -79,12 +85,40 @@ class Extraxt(object):
                         self.result.push(img_src, "image")
                     else:
                         logging.info("no img src, {}, <url: {}>".format(child, "url"))
+                elif child.name == "a":
+                    self._parse_tag_a(child)
             elif isinstance(child, Comment):
                 continue
             else:
                 if child.string != "\n" and child.string.strip():
                     # print repr(child.string)
                     self.result.push(child.string)
+
+    def _parse_tag_a(self, root):
+        _r = []
+        link = root.get("href", "")
+        for child in root:
+            if isinstance(child, Tag):
+                if child.name == "img":
+                    _r.append(LinkItem("image", priority_get(child, ["src", "data-src"]), link))
+
+            elif isinstance(child, Comment):
+                continue
+
+            else:
+                if child.string != "\n" and child.string.strip():
+                    if len(_r):
+                        last_item = LinkItem(*_r.pop())
+                        if last_item.type_ == "text":
+                            last_item.data += child.string
+                            _r.append(last_item)
+                        else:
+                            _r.append(LinkItem("text", child.string, link))
+                    _r.append(LinkItem("text", child.string, link))
+
+        logging.info(_r)
+        for item in _r:
+            self.result.push(item.data, type_=item.type_, link=item.href)
 
     def get_result(self):
         return self.result.get_result()
