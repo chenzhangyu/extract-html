@@ -18,6 +18,7 @@ class IndexHandler(tornado.web.RequestHandler):
     def post(self):
         logging.info(self.request)
         url = self.get_body_argument("url")
+        logging.info("fetch url: [{}]".format(url))
         headers = {
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
             "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36",

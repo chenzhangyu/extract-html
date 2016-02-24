@@ -56,13 +56,28 @@ class ExtractResponse(object):
         assert type_ in self.type_allowed
         if type_ == "image":
             data = self._strip_img_src(data)
-        self._r.append({
-            "seq": self._counter,
-            "type": type_,
-            "data": data,
-            "link": link
-        })
-        self._counter += 1
+
+        is_merged = False
+        if self._counter:
+
+            # TODO get by seq
+            item = self._r.pop()
+
+            if item["type"] == "text" and item["link"] == link:
+                item["data"] += data
+                self._r.append(item)
+                is_merged = True
+            else:
+                self._r.append(item)
+
+        if not is_merged:
+            self._r.append({
+                "seq": self._counter,
+                "type": type_,
+                "data": data,
+                "link": link
+            })
+            self._counter += 1
 
     def get_result(self):
         return self._r

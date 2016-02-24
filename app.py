@@ -33,7 +33,7 @@ def main():
 
 if __name__ == "__main__":
     logging.basicConfig(
-        # filename="server.log",
+        filename="server.log",
         level=logging.DEBUG,
         format="[%(name)s][%(levelname)s][%(asctime)s]: %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S"
