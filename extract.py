@@ -63,7 +63,7 @@ class ExtractResponse(object):
             # TODO get by seq
             item = self._r.pop()
 
-            if item["type"] == "text" and item["link"] == link:
+            if item["type"] == "text" and type_ == "text" and item["link"] == link:
                 item["data"] += data
                 self._r.append(item)
                 is_merged = True
