@@ -52,13 +52,13 @@ class ExtractResponse(object):
     def type_allowed(self):
         return ("text", "image")
 
-    def push(self, data, type_="text", link=""):
+    def push(self, data, type_="text", link="", merged=False):
         assert type_ in self.type_allowed
         if type_ == "image":
             data = self._strip_img_src(data)
 
         is_merged = False
-        if self._counter:
+        if merged and self._counter:
 
             # TODO get by seq
             item = self._r.pop()
@@ -137,50 +137,3 @@ class Extraxt(object):
 
     def get_result(self):
         return self.result.get_result()
-
-
-def extract(raw):
-    result = ExtractResponse()
-    soup = BeautifulSoup(raw, "lxml")
-    for child in soup.body.descendants:
-        if isinstance(child, Tag):
-            if child.name == "img":
-                img_src = priority_get(child, ["src", "data-src"])
-                if img_src:
-                    result.push(img_src, "image")
-                else:
-                    logging.info("no img src, {}, <url: {}>".format(child, "url"))
-        elif isinstance(child, Comment):
-            continue
-        else:
-            if child.string != "\n" and child.string.strip():
-                # print repr(child.string)
-                result.push(child.string)
-    return result.get_result()
-
-
-if __name__ == "__main__":
-    s = """
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <title></title>
-        </head>
-        <body>
-            <p> test text </p>
-            <img src="a.jpeg" width="100px"> <br />
-            <img src='a.jpeg' width="100px"> <br>
-            <p> new text </p>
-            <div>
-                haha
-                <!-- <p> hehe </p> -->
-            </div>
-        </body>
-        </html>
-        """
-    with open("./raw.html", "r") as f:
-        s = f.read()
-    task = Extraxt(s)
-    task.parse()
-    print task.get_result()
