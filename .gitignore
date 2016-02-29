@@ -3,4 +3,5 @@
 *.log
 venv/
 rsync.sh
+.exclude
 etc/config.conf

@@ -1,6 +1,6 @@
-#web api for extract html[demo]
+#web api for extract html
 
-based on [readability-lxml](https://github.com/buriy/python-readability)
+Demo based on [readability-lxml](https://github.com/buriy/python-readability)
 
 1. Install dependences in requirements.txt
 

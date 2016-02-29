@@ -1,5 +1,0 @@
-venv/
-.git/
-*.pyc
-*.swp
-*.log
