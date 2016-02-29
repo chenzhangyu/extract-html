@@ -3,3 +3,4 @@
 *.log
 venv/
 rsync.sh
+etc/config.conf
