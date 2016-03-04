@@ -2,6 +2,21 @@
 
 import logging
 
+# set logger handler
+formatter = logging.Formatter("%(asctime)s %(name)-12s %(levelname)-6s %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
+
+console = logging.StreamHandler()
+console.setLevel(logging.DEBUG)
+console.setFormatter(formatter)
+
+fh = logging.FileHandler("server.log")
+fh.setLevel(logging.DEBUG)
+fh.setFormatter(formatter)
+
+logger = logging.getLogger("")
+logger.addHandler(fh)
+logger.addHandler(console)
+
 import tornado.web
 import tornado.httpserver
 import tornado.ioloop
@@ -34,10 +49,4 @@ def main():
 
 
 if __name__ == "__main__":
-    logging.basicConfig(
-        filename=options.log_file,
-        level=logging.DEBUG,
-        format="[%(name)s][%(levelname)s][%(asctime)s]: %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S"
-    )
     main()

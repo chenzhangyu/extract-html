@@ -42,8 +42,8 @@ class IndexHandler(tornado.web.RequestHandler):
         document = Document(response.body).summary()
         task = Extraxt(document)
         task.parse()
-        self.write(json.dumps({
+        self.write({
             "title": title,
             "items": task.get_result()
-        }))
+        })
         self.finish()
